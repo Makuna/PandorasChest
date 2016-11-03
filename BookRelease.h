@@ -1,6 +1,6 @@
 
 const uint32_t c_msBookReleaseTrigger = 2000; // milliseconds it takes to spool
-const uint16_t c_servoCenter = DEFAULT_PULSE_WIDTH + 10;
+const uint16_t c_servoSet = 0;
 
 enum BookReleaseState
 {
@@ -35,7 +35,7 @@ public:
     if (_state == BookReleaseState_Set)
     {
       _servo.attach(_pin);
-      _servo.write(MAX_PULSE_WIDTH);
+      _servo.write(180);
       _msActionStartTime = millis(); // capture current time
       _state = BookReleaseState_Triggered;
       Serial.println("triggering");
@@ -56,14 +56,13 @@ public:
          {
            Serial.println("resetting");
            _state = BookReleaseState_Resetting;
-           _servo.write(MIN_PULSE_WIDTH); // reset
+           _servo.write(c_servoSet); // reset
            _msActionStartTime = time; // start timing from here
          }
          else if (_state == BookReleaseState_Resetting)
          {
            Serial.println("set");
            _state = BookReleaseState_Set;
-           _servo.write(c_servoCenter); // center for not moving
            _servo.detach(); // stop all motion holding
          }
        }
