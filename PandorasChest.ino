@@ -14,13 +14,8 @@ BookRelease bookRelease(c_pinServoBookRelease);
 
 PandoraServer book;
 
-void OnBookCommand(const BookCommand& command)
+void onBookCommand(const BookCommand& command)
 {
-    
-  Serial.print(command.command);
-  Serial.print(" ");
-  Serial.println(command.param);
-  
   if (command.param == ButtonState_Click)
   {
     switch (command.command)
@@ -38,13 +33,12 @@ void OnBookCommand(const BookCommand& command)
       case ButtonId_3:
       bookRelease.trigger();
       break;
-      
     }
   }
-
 }
 
-void setup() {
+void setup() 
+{
   Serial.begin(115200);
   while (!Serial); // wait for serial attach
   Serial.println();
@@ -60,12 +54,32 @@ void setup() {
   bookRelease.begin();
     
   book.begin(ssid, password);
+
+  Serial.println("=============================");
+  WiFi.printDiag(Serial);
+  Serial.println("=============================");
 }
 
-void loop() {
-  delay(random(10) + 5); // simulating other work
+void onServerStatusChange(const PandoraServerStatus& status)
+{
+  switch (status.state)
+  {
+  case PandoraServerState_ClientConnected:
+    Serial.println("client connected");
+    break;
+
+  case PandoraServerState_CommandReadError:
+    Serial.println("--- read command error ---");
+    break;
+  }
+}
+
+void loop() 
+{
+  // simulating other work, remove for final
+  delay(random(10) + 5); 
   
-  book.loop(OnBookCommand);
+  book.loop(onBookCommand, onServerStatusChange);
   bookRelease.loop();
 }
 
