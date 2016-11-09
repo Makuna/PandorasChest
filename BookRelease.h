@@ -38,7 +38,6 @@ public:
       _servo.write(180);
       _msActionStartTime = millis(); // capture current time
       _state = BookReleaseState_Triggered;
-      Serial.println("triggering");
     }
   }
 
@@ -54,14 +53,12 @@ public:
        {
          if (_state == BookReleaseState_Triggered)
          {
-           Serial.println("resetting");
            _state = BookReleaseState_Resetting;
            _servo.write(c_servoSet); // reset
            _msActionStartTime = time; // start timing from here
          }
          else if (_state == BookReleaseState_Resetting)
          {
-           Serial.println("set");
            _state = BookReleaseState_Set;
            _servo.detach(); // stop all motion holding
          }
